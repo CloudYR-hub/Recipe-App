@@ -8,6 +8,8 @@ app.use(cors())
 app.use(express.json())
 const authRoutes = require('./routes/authRoutes')
 app.use('/api/auth', authRoutes)
+const recipeRoutes = require('./routes/recipeRoutes')
+app.use('/api/recipes', recipeRoutes)
 app.get('/api/test', (req, res) => {
   res.json({ message: 'Hello!' })
 })
