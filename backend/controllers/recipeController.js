@@ -1,5 +1,6 @@
 const Recipe = require('../models/recipe')
-
+const { GoogleGenerativeAI } = require('@google/generative-ai')
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
 const createRecipe = async (req, res) => {
   try {
     const { title, description, image, sourceURL, ingredients, steps } = req.body
@@ -84,6 +85,31 @@ const toggleFavorite = async (req, res) => {
     res.status(500).json({ message: error.message })
   }
 }
+const importRecipe = async (req, res) => {
+  try {
+    const { text } = req.body
+
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
+    const prompt = `You are a recipe extraction assistant. 
+    Extract the recipe from the text provided and return ONLY a JSON object with no extra text, 
+    no markdown, no backticks. 
+    The JSON must have exactly these fields:
+    {"title": "string", "description": "string", "ingredients": ["array"], "steps": ["array"]}
+    If any field is missing, use empty string or empty array.
+
+    Text: ${text}`
+
+    const result = await model.generateContent(prompt)
+    const aiResponse = result.response.text()
+    const extracted = JSON.parse(aiResponse)
+    const recipe = await Recipe.create({ ...extracted, user: req.user.id })
+    res.status(201).json(recipe)
+    
+
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
 module.exports = { 
 
   createRecipe, 
@@ -96,6 +122,8 @@ module.exports = {
 
   deleteRecipe, 
 
-  toggleFavorite 
+  toggleFavorite,
+
+  importRecipe
 
 }

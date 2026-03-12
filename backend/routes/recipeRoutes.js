@@ -7,7 +7,8 @@ const {
   createRecipe,
   updateRecipe,
   deleteRecipe,
-  toggleFavorite
+  toggleFavorite,
+  importRecipe
 } = require('../controllers/recipeController')
 
 router.get('/', protect, getRecipes)
@@ -16,5 +17,6 @@ router.post('/', protect, createRecipe)
 router.put('/:id', protect, updateRecipe)
 router.delete('/:id', protect, deleteRecipe)
 router.patch('/:id/favorite', protect, toggleFavorite)
+router.post('/import', protect, importRecipe)
 
 module.exports = router
