@@ -5,10 +5,12 @@ import Import from './pages/import.jsx'
 import Login from './pages/login.jsx'
 import Recipe from './pages/recipe.jsx'
 import Register from './pages/register.jsx'
+import NavBar from './components/navbar.jsx'
 
 function App() {
   return (
     <BrowserRouter>
+      <NavBar/>
       <Routes>
           <Route path="/" element={<Home/>}/>
           <Route path="/create" element={<Create/>}/>
